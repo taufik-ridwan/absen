@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replika QR Code Absensi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #qrcode {
+            margin: 30px auto;
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .output-text {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 14px;
+            text-align: left;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Replika QR Code Absensi (Lokasi IGD)</h1>
+		
+		<div class="output-text" id="outputText"></div>
+        
+        <div id="qrcode"></div>
+        
+        <div class="timestamp" id="timestampDisplay"></div>
+        
+        <button onclick="regenerateQR()">Regenerate with New Timestamp</button>
+        <button onclick="copyToClipboard()">Copy Text</button>
+    </div>
+
+    <script>
+        // Define variables (Updated for IGD)
+        const AB1 = '{"L_CODE":"10.17.1.62","R_NO":"62","I_CODE":"030101","TIMESTAMP":';
+        const AB2 = ',"INSTALASI":';
+        const AB3 = '"IGD"';
+        const AB4 = ',"KEY":"C"}';
+
+        let qrcode = null;
+
+        function generateQR() {
+            // Get current timestamp in epoch (seconds)
+            const TS = Math.floor(Date.now() / 1000);
+            
+            // Combine all variables
+            const outputString = AB1 + TS + AB2 + AB3 + AB4;
+            
+            // Display the output text
+            document.getElementById('outputText').textContent = outputString;
+            
+            // Display human-readable timestamp
+            const date = new Date(TS * 1000);
+            document.getElementById('timestampDisplay').textContent = 
+                'Generated at: ' + date.toLocaleString();
+            
+            // Clear previous QR code
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Generate QR code
+            qrcode = new QRCode(document.getElementById('qrcode'), {
+                text: outputString,
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function regenerateQR() {
+            generateQR();
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('outputText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Text copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Generate QR code on page load
+        generateQR();
+    </script>
+</body>
+</html>
