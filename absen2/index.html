@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Absensi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* Reset margins and center the content */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #ffffff; /* Pure white background for scannability */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="qrcode"></div>
+
+    <script>
+        // Define variables
+        const AB1 = '{"L_CODE":"10.19.1.27","R_NO":"127","I_CODE":"","TIMESTAMP":';
+        const AB2 = ',"INSTALASI":';
+        const AB3 = '"Absen di PA"';
+        const AB4 = ',"KEY":"A"}';
+
+        let qrcode = null;
+
+        // Function to generate the current string
+        function getOutputString() {
+            const TS = Math.floor(Date.now() / 1000);
+            return AB1 + TS + AB2 + AB3 + AB4;
+        }
+
+        // Initialize and generate the first QR Code
+        function initQR() {
+            qrcode = new QRCode(document.getElementById('qrcode'), {
+                text: getOutputString(),
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Set interval to refresh the QR code every 1000ms (1 second)
+            setInterval(() => {
+                qrcode.clear(); // clear the existing QR code
+                qrcode.makeCode(getOutputString()); // make the new one
+            }, 1000);
+        }
+
+        // Run when page loads
+        window.onload = initQR;
+    </script>
+</body>
+</html>
