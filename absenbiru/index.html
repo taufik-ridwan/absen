@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Code Presensi</title>
+  
+  <!-- QR code generator library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    /* Reset margins and center the QR code exactly in the middle of the screen */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Container for the QR Code -->
+  <div id="qrcode"></div>
+
+  <script>
+    // ---- QR presensi generation logic ----
+    const AB1 = '{"L_CODE":"10.19.1.75","R_NO":"175","I_CODE":"0404","TIMESTAMP":';
+    const AB2 = ',"INSTALASI":';
+    const AB3 = '"Instalasi Patologi Anatomi"';
+    const AB4 = ',"KEY":"B"}';
+
+    let qrcode = null;
+
+    function getOutputString() {
+      const TS = Math.floor(Date.now() / 1000);
+      return AB1 + TS + AB2 + AB3 + AB4;
+    }
+
+    function initQR() {
+      const el = document.getElementById('qrcode');
+      if (!el) return;
+      
+      qrcode = new QRCode(el, {
+        text: getOutputString(),
+        width: 300, // Scaled up nicely since it is the only element on the page
+        height: 300, 
+        colorDark: '#0033CC', // The requested blue color
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Refresh the QR code every second so it stays valid/live
+      setInterval(() => {
+        qrcode.clear();
+        qrcode.makeCode(getOutputString());
+      }, 1000);
+    }
+
+    window.addEventListener('load', initQR);
+  </script>
+
+</body>
+</html>
